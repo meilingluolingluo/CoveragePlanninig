@@ -1,82 +1,107 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
+using namespace std;
 
-struct Point
+struct point
 {
-    int x;
-    int y;
+    double x;
+    double y;
 };
 
-void boustrophedonTraversal(const int &x, const int &y,const int& size)
+vector<point> boustrophedon_decomposition(double start_x, double start_y, double end_x, double end_y, double step_size)
 {
+    vector<point> path;
 
-    std::vector<Point> path;
-    // 记录起点坐标
-    path.push_back({0, 0});
-    bool moveRight = true;
+    double min_x = min(start_x, end_x);
+    double max_x = max(start_x, end_x);
+    double min_y = min(start_y, end_y);
+    double max_y = max(start_y, end_y);
+    int rows = (max_y - min_y) / step_size; // 计算区域分成几行
+    int cols = (max_x - min_x) / step_size; // 计算区域分成几列
+    cout << "行：" << rows << "列:" << cols << endl;
 
-    if (x >= y)
+    if ((start_x <= end_x) && (start_y <= end_y))
     {
-        for (int row = 0; row <= y; row+=size)
-        {
-            if (moveRight)
+        if (rows <= cols)
+        { // 如果x大于y
+            for (int i = 0; i < rows; i++)
             {
-                for (int col = 0 + 1; col <= x; col+=size)
-                {
-                    path.push_back({col, row});
-                }
-            }
-            else
-            {
-                for (int col = x; col >= 0 + 1; col-=size)
-                {
-                    path.push_back({col, row});
-                }
-            }
-            // 改变方向
-            moveRight = !moveRight;
-        }
-        }
-        else
-        {
-            for (int col = 0; col <= x; col+=size)
-            {
-                if (moveRight)
-                {
-                    for (int row = 0 + 1; row <= y; row+=size)
+
+                if (i % 2 == 0)
+                { // 如果是偶数行，则从左往右走
+
+                    for (int j = 0; j < cols; j++)
                     {
-                        path.push_back({col, row});
+                        point p;
+                        p.y = start_y + i * step_size;
+                        p.x = start_x + j * step_size;
+                        path.push_back(p);
                     }
                 }
                 else
-                {
-                    for (int row = y; row >= 0 + 1; row-=size)
+                { // 如果是奇数行，则从右往左走
+
+                    for (int j = cols - 1; j >= 0; j--)
                     {
-                        path.push_back({col, row});
+                        point p;
+                        p.y = start_y + i * step_size;
+                        p.x = start_x + j * step_size;
+                        path.push_back(p);
                     }
                 }
-                // 改变方向
-                moveRight = !moveRight;
             }
         }
+        else if (rows > cols)
+        { // 如果x小于y
+            for (int i = 0; i <= cols; i++)
+            {
+                if (i % 2 == 0)
+                { // 如果是偶数行，则从上往下走
 
-        // 输出遍历路径坐标
-        for (const auto &point : path)
-        {
-            std::cout << "(" << point.x << ", " << point.y << ") ";
+                    for (int j = 0; j < rows; j++)
+                    {
+                        point p;
+                        p.y = start_y + j * step_size;
+                        p.x = start_x + i * step_size;
+                        path.push_back(p);
+                    }
+                }
+                else
+                { // 如果是奇数行，则从下往上走
+                    for (int j = rows-1; j >= 0; j--)
+                    {
+                        point p;
+                        p.y = start_y + j * step_size;
+                        p.x = start_x + i * step_size;
+                        path.push_back(p);
+                    }
+                }
+            }
         }
-        std::cout << std::endl;
     }
+    return path;
+}
 
-    int main()
+int main()
+{
+
+    double start_x = 0.0;
+    double start_y = 0.0;
+    double end_x = 1000.0;
+    double end_y = 1000.0;
+    double step_size = 100.0;
+    fstream f;
+    f.open("parm.txt", ios::in);
+    f >> start_x >> start_y >> end_x >> end_y >> step_size;
+
+    vector<point> path = boustrophedon_decomposition(start_x, start_y, end_x, end_y, step_size);
+    fstream o;
+    o.open("out.txt", ios::out);
+    for (int i = 0; i < path.size(); i++)
     {
-
-        int x, y,size;
-        x = 8;//长度
-        y = 10;//宽度
-        size = 1;//步长
-
-        boustrophedonTraversal(x, y,size);
-
-        return 0;
+        o << (path[i].x + 50) << "," << (path[i].y + 50) <<",";
+        // o  << path[i].x << "," << path[i].y<<endl;
     }
+    return 0;
+}
