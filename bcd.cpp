@@ -100,7 +100,7 @@ int main()
     o.open("out.txt", ios::out);
     for (int i = 0; i < path.size(); i++)
     {
-        o << (path[i].x + 50) << "," << (path[i].y + 50) <<",";
+        o << (path[i].x + step_size/2) << "," << (path[i].y + step_size/2) <<",";
         // o  << path[i].x << "," << path[i].y<<endl;
     }
     return 0;
