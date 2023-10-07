@@ -69,7 +69,7 @@ vector<point> boustrophedon_decomposition(double start_x, double start_y, double
                 }
                 else
                 { // 如果是奇数行，则从下往上走
-                    for (int j = rows-1; j >= 0; j--)
+                    for (int j = rows - 1; j >= 0; j--)
                     {
                         point p;
                         p.y = start_y + j * step_size;
@@ -83,9 +83,8 @@ vector<point> boustrophedon_decomposition(double start_x, double start_y, double
     return path;
 }
 
-int main()
+void read()
 {
-
     double start_x = 0.0;
     double start_y = 0.0;
     double end_x = 1000.0;
@@ -96,12 +95,26 @@ int main()
     f >> start_x >> start_y >> end_x >> end_y >> step_size;
 
     vector<point> path = boustrophedon_decomposition(start_x, start_y, end_x, end_y, step_size);
+
     fstream o;
     o.open("out.txt", ios::out);
     for (int i = 0; i < path.size(); i++)
     {
-        o << (path[i].x + step_size/2) << "," << (path[i].y + step_size/2) <<",";
+        o << (path[i].x + step_size / 2) << "," << (path[i].y + step_size / 2) << ",";
         // o  << path[i].x << "," << path[i].y<<endl;
     }
+}
+string read2()
+{
+    string x;
+    fstream f2;
+    f2.open("out.txt", ios::in);
+    f2 >> x;
+    return x;
+}
+int main()
+{
+    read();
+    cout << read2();
     return 0;
 }
